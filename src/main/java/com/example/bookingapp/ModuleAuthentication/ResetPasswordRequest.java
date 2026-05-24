@@ -1,0 +1,9 @@
+package com.example.bookingapp.ModuleAuthentication;
+
+import lombok.Data;
+
+@Data
+public class ResetPasswordRequest {
+    private String token;
+    private String newPassword;
+}
