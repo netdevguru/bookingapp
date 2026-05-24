@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.dto;
 
 import java.time.LocalDateTime;
 

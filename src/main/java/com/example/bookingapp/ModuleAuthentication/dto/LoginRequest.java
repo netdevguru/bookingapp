@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModuleAuthentication;
+package com.example.bookingapp.ModuleAuthentication.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

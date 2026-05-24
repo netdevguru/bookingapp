@@ -17,8 +17,8 @@ import com.example.bookingapp.ModuleAppointment.repository.AppointmentHistoryRep
 import com.example.bookingapp.ModuleAppointment.repository.AppointmentRepository;
 import com.example.bookingapp.ModuleAppointment.repository.AppointmentSlotRepository;
 import com.example.bookingapp.ModuleAppointment.repository.DoctorRepository;
-import com.example.bookingapp.ModuleUser.UserEntity;
-import com.example.bookingapp.ModuleUser.UserRepository;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

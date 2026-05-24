@@ -1,4 +1,7 @@
-package com.example.bookingapp.FileStorage;
+package com.example.bookingapp.FileStorage.controller;
+
+import com.example.bookingapp.FileStorage.service.FileStorageService;
+import com.example.bookingapp.FileStorage.dto.UploadFileResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

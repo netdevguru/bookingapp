@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

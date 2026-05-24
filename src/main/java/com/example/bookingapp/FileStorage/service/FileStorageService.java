@@ -1,6 +1,10 @@
-package com.example.bookingapp.FileStorage;
+package com.example.bookingapp.FileStorage.service;
 
-import com.example.bookingapp.ModuleUser.InvalidImageException;
+import com.example.bookingapp.FileStorage.config.FileStorageProperties;
+import com.example.bookingapp.FileStorage.exception.FileNotFoundException;
+import com.example.bookingapp.FileStorage.exception.FileStorageException;
+
+import com.example.bookingapp.ModuleUser.exception.InvalidImageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

@@ -1,7 +1,7 @@
 
 package com.example.bookingapp.ModuleSubscription.exception;
 
-import com.example.bookingapp.ModuleUser.UserException;
+import com.example.bookingapp.ModuleUser.exception.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

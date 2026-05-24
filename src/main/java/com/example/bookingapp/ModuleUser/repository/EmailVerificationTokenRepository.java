@@ -1,4 +1,7 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.repository;
+
+import com.example.bookingapp.ModuleUser.entity.EmailVerificationTokenEntity;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

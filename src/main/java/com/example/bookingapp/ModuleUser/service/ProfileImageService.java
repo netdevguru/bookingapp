@@ -1,6 +1,13 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.service;
 
-import com.example.bookingapp.FileStorage.FileStorageService;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.entity.UserProfileEntity;
+import com.example.bookingapp.ModuleUser.repository.UserProfileRepository;
+import com.example.bookingapp.ModuleUser.repository.UserRepository;
+import com.example.bookingapp.ModuleUser.dto.ProfileImageResponse;
+import com.example.bookingapp.ModuleUser.exception.UserException;
+
+import com.example.bookingapp.FileStorage.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModulePayment;
+package com.example.bookingapp.ModulePayment.controller;
 
 import com.example.bookingapp.ModulePayment.dto.RazorpayOrderRequest;
 import com.example.bookingapp.ModulePayment.dto.RazorpayVerifyRequest;

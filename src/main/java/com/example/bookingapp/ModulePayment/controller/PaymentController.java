@@ -1,4 +1,7 @@
-package com.example.bookingapp.ModulePayment;
+package com.example.bookingapp.ModulePayment.controller;
+
+import com.example.bookingapp.ModulePayment.entity.PaymentEntity;
+import com.example.bookingapp.ModulePayment.service.PaymentService;
 
 import com.example.bookingapp.ModulePayment.dto.RazorpayPaymentRequest;
 import com.example.bookingapp.ModulePayment.dto.StripePaymentRequest;

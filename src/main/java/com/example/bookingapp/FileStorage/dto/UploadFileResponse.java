@@ -1,4 +1,4 @@
-package com.example.bookingapp.FileStorage;
+package com.example.bookingapp.FileStorage.dto;
 
 public class UploadFileResponse {
     private String fileName;

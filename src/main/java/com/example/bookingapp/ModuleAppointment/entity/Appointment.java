@@ -1,7 +1,7 @@
 package com.example.bookingapp.ModuleAppointment.entity;
 
 import com.example.bookingapp.ModuleAppointment.enums.AppointmentStatus;
-import com.example.bookingapp.ModuleUser.UserEntity;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

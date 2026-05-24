@@ -1,7 +1,7 @@
 package com.example.bookingapp.config;
 
-import com.example.bookingapp.ModuleUser.UserEntity;
-import com.example.bookingapp.ModuleUser.UserRepository;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

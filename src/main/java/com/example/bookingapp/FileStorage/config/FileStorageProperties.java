@@ -1,4 +1,4 @@
-package com.example.bookingapp.FileStorage;
+package com.example.bookingapp.FileStorage.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

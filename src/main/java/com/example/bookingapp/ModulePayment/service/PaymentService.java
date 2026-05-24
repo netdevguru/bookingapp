@@ -1,4 +1,7 @@
-package com.example.bookingapp.ModulePayment;
+package com.example.bookingapp.ModulePayment.service;
+
+import com.example.bookingapp.ModulePayment.entity.PaymentEntity;
+import com.example.bookingapp.ModulePayment.repository.PaymentRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

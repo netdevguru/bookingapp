@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.exception;
 
 public class InvalidImageException extends RuntimeException {
     public InvalidImageException(String message) {

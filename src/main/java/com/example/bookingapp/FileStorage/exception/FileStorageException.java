@@ -1,4 +1,4 @@
-package com.example.bookingapp.FileStorage;
+package com.example.bookingapp.FileStorage.exception;
 
 public class FileStorageException extends RuntimeException {
     public FileStorageException(String message) {

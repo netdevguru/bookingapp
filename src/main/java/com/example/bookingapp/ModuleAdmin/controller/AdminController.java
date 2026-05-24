@@ -1,7 +1,7 @@
 package com.example.bookingapp.ModuleAdmin.controller;
 
-import com.example.bookingapp.ModuleUser.UserEntity;
-import com.example.bookingapp.ModuleUser.UserRepository;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.repository.UserRepository;
 
 import com.example.bookingapp.ModuleAppointment.events.NotificationEvent;
 import com.example.bookingapp.ModuleAppointment.service.EventPublisherService;

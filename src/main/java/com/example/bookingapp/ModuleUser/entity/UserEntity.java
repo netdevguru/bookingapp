@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,6 +1,6 @@
-package com.example.bookingapp.FileStorage;
+package com.example.bookingapp.FileStorage.exception;
 
-import com.example.bookingapp.ModuleUser.InvalidImageException;
+import com.example.bookingapp.ModuleUser.exception.InvalidImageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

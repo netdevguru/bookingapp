@@ -1,6 +1,14 @@
-package com.example.bookingapp.ModuleAuthentication;
+package com.example.bookingapp.ModuleAuthentication.controller;
 
-import com.example.bookingapp.ModuleUser.UserException;
+import com.example.bookingapp.ModuleAuthentication.dto.AuthResponse;
+import com.example.bookingapp.ModuleAuthentication.dto.ForgotPasswordRequest;
+import com.example.bookingapp.ModuleAuthentication.dto.LoginRequest;
+import com.example.bookingapp.ModuleAuthentication.dto.ResetPasswordRequest;
+import com.example.bookingapp.ModuleUser.entity.PasswordResetTokenEntity;
+import com.example.bookingapp.ModuleUser.repository.PasswordResetTokenRepository;
+import com.example.bookingapp.ModuleUser.service.UserService;
+
+import com.example.bookingapp.ModuleUser.exception.UserException;
 import com.example.bookingapp.config.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.bookingapp.ModuleUser.UserRepository;
-import com.example.bookingapp.ModuleUser.UserEntity;
-import com.example.bookingapp.ModuleUser.CustomUserServiceImplementation;
-import com.example.bookingapp.ModuleUser.EmailVerificationTokenEntity;
-import com.example.bookingapp.ModuleUser.EmailVerificationTokenRepository;
+import com.example.bookingapp.ModuleUser.repository.UserRepository;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.service.CustomUserServiceImplementation;
+import com.example.bookingapp.ModuleUser.entity.EmailVerificationTokenEntity;
+import com.example.bookingapp.ModuleUser.repository.EmailVerificationTokenRepository;
 import com.example.bookingapp.ModuleAppointment.events.NotificationEvent;
 import com.example.bookingapp.ModuleAppointment.service.EventPublisherService;
 import java.time.LocalDateTime;
@@ -58,10 +66,10 @@ public class AuthController {
 
 
     @Autowired
-    private com.example.bookingapp.ModuleUser.UserService userService;
+    private com.example.bookingapp.ModuleUser.service.UserService userService;
 
     @Autowired
-    private com.example.bookingapp.ModuleUser.PasswordResetTokenRepository passwordResetTokenRepository;
+    private com.example.bookingapp.ModuleUser.repository.PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Value("${app.base-url}")
     private String baseUrl;
@@ -305,7 +313,7 @@ public class AuthController {
             }
             
             // Delete any existing reset tokens for this user
-            com.example.bookingapp.ModuleUser.PasswordResetTokenEntity existingToken = 
+            com.example.bookingapp.ModuleUser.entity.PasswordResetTokenEntity existingToken = 
                 passwordResetTokenRepository.findByUser(user);
             if (existingToken != null) {
                 passwordResetTokenRepository.delete(existingToken);
@@ -319,8 +327,8 @@ public class AuthController {
             java.util.Date expiryDate = cal.getTime();
             
             // Save token
-            com.example.bookingapp.ModuleUser.PasswordResetTokenEntity passwordResetToken = 
-                new com.example.bookingapp.ModuleUser.PasswordResetTokenEntity(user, resetToken, expiryDate);
+            com.example.bookingapp.ModuleUser.entity.PasswordResetTokenEntity passwordResetToken = 
+                new com.example.bookingapp.ModuleUser.entity.PasswordResetTokenEntity(user, resetToken, expiryDate);
             passwordResetTokenRepository.save(passwordResetToken);
             
             // Send email
@@ -356,7 +364,7 @@ public class AuthController {
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
         try {
-            com.example.bookingapp.ModuleUser.PasswordResetTokenEntity tokenEntity = 
+            com.example.bookingapp.ModuleUser.entity.PasswordResetTokenEntity tokenEntity = 
                 passwordResetTokenRepository.findByToken(request.getToken());
             
             if (tokenEntity == null) {

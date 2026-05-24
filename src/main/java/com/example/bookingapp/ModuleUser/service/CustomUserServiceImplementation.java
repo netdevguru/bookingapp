@@ -1,4 +1,7 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.service;
+
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;

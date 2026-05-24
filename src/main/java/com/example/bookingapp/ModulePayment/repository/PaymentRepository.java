@@ -1,4 +1,6 @@
-package com.example.bookingapp.ModulePayment;
+package com.example.bookingapp.ModulePayment.repository;
+
+import com.example.bookingapp.ModulePayment.entity.PaymentEntity;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

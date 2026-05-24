@@ -1,6 +1,6 @@
-package com.example.bookingapp.ModuleAuthentication;
+package com.example.bookingapp.ModuleAuthentication.dto;
 
-import com.example.bookingapp.ModuleUser.UserEntity;
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

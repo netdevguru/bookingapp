@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModulePayment;
+package com.example.bookingapp.ModulePayment.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

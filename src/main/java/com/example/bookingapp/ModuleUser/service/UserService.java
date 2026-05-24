@@ -1,4 +1,7 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.service;
+
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.exception.UserException;
 
 public interface UserService {
     public UserEntity findUserProfileByJwt(String jwt) throws UserException;

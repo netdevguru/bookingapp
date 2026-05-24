@@ -1,4 +1,13 @@
-package com.example.bookingapp.ModuleUser;
+package com.example.bookingapp.ModuleUser.controller;
+
+import com.example.bookingapp.ModuleUser.entity.UserEntity;
+import com.example.bookingapp.ModuleUser.service.ProfileImageService;
+import com.example.bookingapp.ModuleUser.service.UserService;
+import com.example.bookingapp.ModuleUser.dto.ChangePasswordRequest;
+import com.example.bookingapp.ModuleUser.dto.ChangePasswordResponse;
+import com.example.bookingapp.ModuleUser.dto.ProfileImageResponse;
+import com.example.bookingapp.ModuleUser.exception.InvalidImageException;
+import com.example.bookingapp.ModuleUser.exception.UserException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
