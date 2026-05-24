@@ -1,0 +1,821 @@
+{
+	"info": {
+		"_postman_id": "healthcare-appointment-api",
+		"name": "Healthcare Appointment API",
+		"description": "Complete API collection for Healthcare Appointment Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:9000",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_email",
+			"value": "user@example.com",
+			"type": "string"
+		},
+		{
+			"key": "doctor_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "appointment_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "slot_id",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.jwt) {",
+									"        pm.collectionVariables.set('jwt_token', jsonData.jwt);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"{{user_email}}\",\n  \"password\": \"Password123!\",\n  \"phoneNumber\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/signup",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "signup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.jwt) {",
+									"        pm.collectionVariables.set('jwt_token', jsonData.jwt);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/signin",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "signin"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/verify-email?token=verification_token_here",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "verify-email"],
+							"query": [
+								{
+									"key": "token",
+									"value": "verification_token_here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resend Verification Email",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{user_email}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/resend-verification",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "resend-verification"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{user_email}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/forgot-password",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "forgot-password"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"reset_token_here\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/reset-password",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "reset-password"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Doctors",
+			"item": [
+				{
+					"name": "Create Doctor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.id) {",
+									"        pm.collectionVariables.set('doctor_id', jsonData.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Sarah\",\n  \"lastName\": \"Johnson\",\n  \"email\": \"dr.sarah@hospital.com\",\n  \"specialization\": \"Cardiology\",\n  \"qualifications\": \"MD, FACC\",\n  \"experienceYears\": 15,\n  \"phoneNumber\": \"+1234567891\",\n  \"bio\": \"Experienced cardiologist specializing in heart disease prevention and treatment\",\n  \"consultationFee\": 150.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/doctors",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Doctors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/doctors",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Doctors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/doctors/available",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors", "available"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Doctor by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/doctors/{{doctor_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors", "{{doctor_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Doctors by Specialization",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/doctors/specialization/Cardiology",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors", "specialization", "Cardiology"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Specializations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/doctors/specializations",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors", "specializations"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Doctors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/doctors/search?keyword=cardio",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors", "search"],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "cardio"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Doctor Availability",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/doctors/{{doctor_id}}/availability?isAvailable=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "doctors", "{{doctor_id}}", "availability"],
+							"query": [
+								{
+									"key": "isAvailable",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointment Slots",
+			"item": [
+				{
+					"name": "Generate Slots for Doctor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0 && jsonData[0].id) {",
+									"        pm.collectionVariables.set('slot_id', jsonData[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/slots/generate?doctorId={{doctor_id}}&date=2026-05-25&startTime=09:00:00&endTime=17:00:00&slotDurationMinutes=30",
+							"host": ["{{base_url}}"],
+							"path": ["api", "slots", "generate"],
+							"query": [
+								{
+									"key": "doctorId",
+									"value": "{{doctor_id}}"
+								},
+								{
+									"key": "date",
+									"value": "2026-05-25"
+								},
+								{
+									"key": "startTime",
+									"value": "09:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "17:00:00"
+								},
+								{
+									"key": "slotDurationMinutes",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Slots",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/slots/available?doctorId={{doctor_id}}&date=2026-05-25",
+							"host": ["{{base_url}}"],
+							"path": ["api", "slots", "available"],
+							"query": [
+								{
+									"key": "doctorId",
+									"value": "{{doctor_id}}"
+								},
+								{
+									"key": "date",
+									"value": "2026-05-25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Slots for Date Range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/slots/available/range?doctorId={{doctor_id}}&startDate=2026-05-25T00:00:00&endDate=2026-05-30T23:59:59",
+							"host": ["{{base_url}}"],
+							"path": ["api", "slots", "available", "range"],
+							"query": [
+								{
+									"key": "doctorId",
+									"value": "{{doctor_id}}"
+								},
+								{
+									"key": "startDate",
+									"value": "2026-05-25T00:00:00"
+								},
+								{
+									"key": "endDate",
+									"value": "2026-05-30T23:59:59"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Create Appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.id) {",
+									"        pm.collectionVariables.set('appointment_id', jsonData.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"doctorId\": {{doctor_id}},\n  \"slotId\": {{slot_id}},\n  \"symptoms\": \"Chest pain and shortness of breath\",\n  \"notes\": \"Patient has history of high blood pressure\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Appointments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/appointments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Appointment History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Appointment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cancellationReason\": \"Unable to attend due to work emergency\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}", "cancel"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Appointment History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}/history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}", "history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Appointment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}/complete?prescription=Take aspirin 100mg daily for 30 days",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}", "complete"],
+							"query": [
+								{
+									"key": "prescription",
+									"value": "Take aspirin 100mg daily for 30 days"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Profile",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "profile"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phoneNumber\": \"+1234567890\",\n  \"dateOfBirth\": \"1990-01-15\",\n  \"gender\": \"MALE\",\n  \"bloodGroup\": \"O+\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10001\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "profile"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"oldPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "change-password"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Admin User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\",\n  \"email\": \"admin@hospital.com\",\n  \"password\": \"AdminPass123!\",\n  \"phoneNumber\": \"+1234567892\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/create-admin",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "create-admin"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Admin Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/settings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin Settings",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"settingKey\": \"MAX_APPOINTMENTS_PER_DAY\",\n  \"settingValue\": \"20\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/settings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "settings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Public Settings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/public/settings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "public", "settings"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File Upload",
+			"item": [
+				{
+					"name": "Upload File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/files/upload",
+							"host": ["{{base_url}}"],
+							"path": ["api", "files", "upload"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download File",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/files/download/filename.pdf",
+							"host": ["{{base_url}}"],
+							"path": ["api", "files", "download", "filename.pdf"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
