@@ -81,7 +81,15 @@ public class KafkaConfig {
 
         props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
         props.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, trustStoreType);
-        props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation);
+        
+        String resolvedTrustStoreLocation = trustStoreLocation;
+        if (resolvedTrustStoreLocation != null && resolvedTrustStoreLocation.startsWith("file:")) {
+            resolvedTrustStoreLocation = resolvedTrustStoreLocation.substring(5);
+            while (resolvedTrustStoreLocation.startsWith("//")) {
+                resolvedTrustStoreLocation = resolvedTrustStoreLocation.substring(1);
+            }
+        }
+        props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, resolvedTrustStoreLocation);
         props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, trustStorePassword);
 
         return props;

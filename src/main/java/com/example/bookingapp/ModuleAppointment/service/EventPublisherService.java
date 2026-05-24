@@ -47,9 +47,11 @@ public class EventPublisherService {
         try {
             log.info("Publishing notification event for appointment ID: {}", event.getAppointmentId());
             
+            String key = event.getAppointmentId() != null ? event.getAppointmentId().toString() : 
+                         (event.getEventId() != null ? event.getEventId() : java.util.UUID.randomUUID().toString());
             CompletableFuture<SendResult<String, Object>> future = 
                 kafkaTemplate.send(kafkaConfig.getNotificationTopicName(), 
-                                  event.getAppointmentId().toString(), 
+                                  key, 
                                   event);
             
             future.whenComplete((result, ex) -> {

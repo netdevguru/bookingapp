@@ -41,7 +41,7 @@ def get_db_connection():
         raise e
 
 # Email helper
-def send_email(to_email, subject, message_content):
+def send_email(to_email, subject, message_content, is_html=False):
     smtp_host = os.getenv("MAIL_HOST")
     smtp_port = os.getenv("MAIL_PORT", "587")
     username = os.getenv("MAIL_USERNAME")
@@ -58,20 +58,23 @@ def send_email(to_email, subject, message_content):
         msg['From'] = f"CloudFlows <{username}@cloudflows.com>"
         msg['To'] = to_email
 
-        # Simple HTML wrapper
-        html_content = f"""
-        <html>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px style=solid #eee; border-radius: 5px;">
-                    <h2 style="color: #4f46e5; border-bottom: 2px solid #f3f4f6; padding-bottom: 10px;">CloudFlows Notification</h2>
-                    <p style="font-size: 16px;">{message_content}</p>
-                    <p style="margin-top: 30px; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; padding-top: 10px;">
-                        This is an automated notification. Please do not reply directly to this email.
-                    </p>
-                </div>
-            </body>
-        </html>
-        """
+        if is_html:
+            html_content = message_content
+        else:
+            # Simple HTML wrapper
+            html_content = f"""
+            <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px style=solid #eee; border-radius: 5px;">
+                        <h2 style="color: #4f46e5; border-bottom: 2px solid #f3f4f6; padding-bottom: 10px;">CloudFlows Notification</h2>
+                        <p style="font-size: 16px;">{message_content}</p>
+                        <p style="margin-top: 30px; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; padding-top: 10px;">
+                            This is an automated notification. Please do not reply directly to this email.
+                        </p>
+                    </div>
+                </body>
+            </html>
+            """
         
         part = MIMEText(html_content, 'html')
         msg.attach(part)
@@ -103,6 +106,19 @@ def update_notification_status(conn, appointment_id):
         print(f"[ERROR] Failed to update database for appointment ID {appointment_id}: {e}")
         raise e
 
+# Email HTML Template Loader
+def load_template(template_name, placeholders):
+    template_path = BASE_DIR / "templates" / template_name
+    try:
+        with open(template_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        for key, val in placeholders.items():
+            content = content.replace("{{" + key + "}}", str(val))
+        return content
+    except Exception as e:
+        print(f"[ERROR] Failed to load template {template_name}: {e}")
+        return ""
+
 # Kafka Event Processing Handlers
 def handle_notification_event(event_data, conn):
     print(f"Processing notification event: {event_data.get('eventId')}")
@@ -112,18 +128,42 @@ def handle_notification_event(event_data, conn):
     message = event_data.get("message")
     appointment_id = event_data.get("appointmentId")
     
-    if not recipient_email or not appointment_id:
-        print("[ERROR] Invalid notification event data: missing recipientEmail or appointmentId")
+    if not recipient_email:
+        print("[ERROR] Invalid notification event data: missing recipientEmail")
         return
         
+    is_html = False
+    # Check if message is a JSON string with template parameters
+    if message and (message.startswith("{") or message.startswith("[")):
+        try:
+            params = json.loads(message)
+            
+            if subject == "Verify Your Email - CloudFlows":
+                message = load_template("verification_email.html", params)
+                is_html = True
+            elif subject == "Welcome to CloudFlows!":
+                message = load_template("welcome_email.html", params)
+                is_html = True
+            elif subject in ["Reset Your Password - CloudFlows", "Password Reset Request"]:
+                message = load_template("password_reset_email.html", params)
+                is_html = True
+        except Exception as json_err:
+            print(f"[WARNING] Failed to parse JSON message or render HTML: {json_err}. Using fallback message.")
+        
     # 1. Send Email
-    success = send_email(recipient_email, subject, message)
+    success = send_email(recipient_email, subject, message, is_html=is_html)
     
-    # 2. Update Database Status
+    # 2. Update Database Status (only if appointment_id is present)
     if success:
-        update_notification_status(conn, appointment_id)
+        if appointment_id is not None:
+            update_notification_status(conn, appointment_id)
+        else:
+            print("[INFO] Generic notification event, skipping database status update.")
     else:
-        print(f"[WARNING] Failed to send email. Skipping database update for appointment ID: {appointment_id}")
+        if appointment_id is not None:
+            print(f"[WARNING] Failed to send email. Skipping database update for appointment ID: {appointment_id}")
+        else:
+            print("[WARNING] Failed to send generic email.")
 
 def handle_appointment_event(event_data):
     event_type = event_data.get("eventType")

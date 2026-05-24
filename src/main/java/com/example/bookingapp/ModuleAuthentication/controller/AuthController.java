@@ -23,7 +23,9 @@ import com.example.bookingapp.ModuleUser.UserEntity;
 import com.example.bookingapp.ModuleUser.CustomUserServiceImplementation;
 import com.example.bookingapp.ModuleUser.EmailVerificationTokenEntity;
 import com.example.bookingapp.ModuleUser.EmailVerificationTokenRepository;
-import com.example.bookingapp.utils.Mailer;
+import com.example.bookingapp.ModuleAppointment.events.NotificationEvent;
+import com.example.bookingapp.ModuleAppointment.service.EventPublisherService;
+import java.time.LocalDateTime;
 
 import java.util.UUID;
 import java.util.Optional;
@@ -32,10 +34,13 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -48,10 +53,9 @@ public class AuthController {
     private EmailVerificationTokenRepository verificationTokenRepository;
 
     @Autowired
-    private Mailer mailer;
+    private EventPublisherService eventPublisher;
 
-    @Autowired
-    private com.example.bookingapp.utils.EmailTemplateLoader emailTemplateLoader;
+
 
     @Autowired
     private com.example.bookingapp.ModuleUser.UserService userService;
@@ -88,10 +92,27 @@ public class AuthController {
 
         // Send verification email
         String verificationUrl = frontendUrl + "/auth/verify-email?token=" + verificationToken;
-        String emailBody = emailTemplateLoader.loadTemplate("verification-email.html", 
-            Map.of("firstName", createdUser.getFirstName(), "verificationUrl", verificationUrl));
+        String emailBody;
+        try {
+            emailBody = objectMapper.writeValueAsString(Map.of(
+                "firstName", createdUser.getFirstName() != null ? createdUser.getFirstName() : "User",
+                "verificationUrl", verificationUrl
+            ));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize verification email params", e);
+        }
         
-        mailer.sendEmail(createdUser.getEmail(), "Verify Your Email - CloudFlows", emailBody, true);
+        NotificationEvent verificationEvent = NotificationEvent.builder()
+            .eventId(UUID.randomUUID().toString())
+            .notificationType("EMAIL")
+            .recipientEmail(createdUser.getEmail())
+            .recipientName(createdUser.getFirstName())
+            .subject("Verify Your Email - CloudFlows")
+            .message(emailBody)
+            .appointmentId(null)
+            .eventTimestamp(LocalDateTime.now())
+            .build();
+        eventPublisher.publishNotificationEvent(verificationEvent);
 
         AuthResponse response = new AuthResponse();
         response.setJwt(null);
@@ -176,9 +197,26 @@ public class AuthController {
             // Send welcome email
             try {
                 String loginUrl = frontendUrl + "/login";
-                String emailBody = emailTemplateLoader.loadTemplate("welcome-email.html",
-                    Map.of("firstName", user.getFirstName(), "loginUrl", loginUrl));
-                mailer.sendEmail(user.getEmail(), "Welcome to CloudFlows!", emailBody, true);
+                String emailBody;
+                try {
+                    emailBody = objectMapper.writeValueAsString(Map.of(
+                        "firstName", user.getFirstName() != null ? user.getFirstName() : "User",
+                        "loginUrl", loginUrl
+                    ));
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to serialize welcome email params", e);
+                }
+                NotificationEvent welcomeEvent = NotificationEvent.builder()
+                    .eventId(UUID.randomUUID().toString())
+                    .notificationType("EMAIL")
+                    .recipientEmail(user.getEmail())
+                    .recipientName(user.getFirstName())
+                    .subject("Welcome to CloudFlows!")
+                    .message(emailBody)
+                    .appointmentId(null)
+                    .eventTimestamp(LocalDateTime.now())
+                    .build();
+                eventPublisher.publishNotificationEvent(welcomeEvent);
                 System.out.println("Welcome email sent to: " + user.getEmail());
             } catch (Exception e) {
                 System.err.println("Failed to send welcome email to " + user.getEmail() + ": " + e.getMessage());
@@ -216,10 +254,27 @@ public class AuthController {
         
         // Send verification email
         String verificationUrl = frontendUrl + "/auth/verify-email?token=" + verificationToken;
-        String emailBody = emailTemplateLoader.loadTemplate("verification-email.html", 
-            Map.of("firstName", user.getFirstName(), "verificationUrl", verificationUrl));
+        String emailBody;
+        try {
+            emailBody = objectMapper.writeValueAsString(Map.of(
+                "firstName", user.getFirstName() != null ? user.getFirstName() : "User",
+                "verificationUrl", verificationUrl
+            ));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize verification email params", e);
+        }
         
-        mailer.sendEmail(user.getEmail(), "Verify Your Email - CloudFlows", emailBody, true);
+        NotificationEvent verificationEvent = NotificationEvent.builder()
+            .eventId(UUID.randomUUID().toString())
+            .notificationType("EMAIL")
+            .recipientEmail(user.getEmail())
+            .recipientName(user.getFirstName())
+            .subject("Verify Your Email - CloudFlows")
+            .message(emailBody)
+            .appointmentId(null)
+            .eventTimestamp(LocalDateTime.now())
+            .build();
+        eventPublisher.publishNotificationEvent(verificationEvent);
         
         return ResponseEntity.ok("Verification email sent successfully!");
     }
@@ -270,9 +325,26 @@ public class AuthController {
             
             // Send email
             String resetUrl = frontendUrl + "/auth/reset-password?token=" + resetToken;
-            String emailBody = emailTemplateLoader.loadTemplate("password-reset-email.html", 
-                Map.of("firstName", user.getFirstName(), "resetUrl", resetUrl));
-            mailer.sendEmail(user.getEmail(), "Reset Your Password - CloudFlows", emailBody, true);
+            String emailBody;
+            try {
+                emailBody = objectMapper.writeValueAsString(Map.of(
+                    "firstName", user.getFirstName() != null ? user.getFirstName() : "User",
+                    "resetUrl", resetUrl
+                ));
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to serialize reset email params", e);
+            }
+            NotificationEvent resetEvent = NotificationEvent.builder()
+                .eventId(UUID.randomUUID().toString())
+                .notificationType("EMAIL")
+                .recipientEmail(user.getEmail())
+                .recipientName(user.getFirstName())
+                .subject("Reset Your Password - CloudFlows")
+                .message(emailBody)
+                .appointmentId(null)
+                .eventTimestamp(LocalDateTime.now())
+                .build();
+            eventPublisher.publishNotificationEvent(resetEvent);
             
             return ResponseEntity.ok("If an account exists with this email, you will receive password reset instructions.");
         } catch (Exception e) {

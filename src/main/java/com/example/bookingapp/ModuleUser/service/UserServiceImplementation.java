@@ -4,15 +4,21 @@ import com.example.bookingapp.config.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.bookingapp.utils.Mailer;
+import com.example.bookingapp.ModuleAppointment.events.NotificationEvent;
+import com.example.bookingapp.ModuleAppointment.service.EventPublisherService;
+import java.time.LocalDateTime;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class UserServiceImplementation implements UserService{
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private UserRepository userRepository;
 
@@ -23,7 +29,7 @@ public class UserServiceImplementation implements UserService{
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private Mailer mailer;
+    private EventPublisherService eventPublisher;
 
     @Override
     public UserEntity findUserProfileByJwt(String jwt) throws UserException {
@@ -83,11 +89,28 @@ public class UserServiceImplementation implements UserService{
         PasswordResetTokenEntity passwordResetToken = new PasswordResetTokenEntity(user, resetToken, expiryDate);
         passwordResetTokenRepository.save(passwordResetToken);
 
-        // Send an email containing the reset link
-        mailer.sendEmail(
-                user.getEmail(),
-                "Click the following link to reset your password: http://localhost:5454/reset-password?token=" + resetToken
-        );
+        // Send an email containing the reset link via Kafka
+        String resetUrl = "http://localhost:5454/reset-password?token=" + resetToken;
+        String emailBody;
+        try {
+            emailBody = objectMapper.writeValueAsString(Map.of(
+                "firstName", user.getFirstName() != null ? user.getFirstName() : "User",
+                "resetUrl", resetUrl
+            ));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize reset email params", e);
+        }
+        NotificationEvent event = NotificationEvent.builder()
+                .eventId(UUID.randomUUID().toString())
+                .notificationType("EMAIL")
+                .recipientEmail(user.getEmail())
+                .recipientName(user.getFirstName())
+                .subject("Password Reset Request")
+                .message(emailBody)
+                .appointmentId(null)
+                .eventTimestamp(LocalDateTime.now())
+                .build();
+        eventPublisher.publishNotificationEvent(event);
     }
 
     private String generateRandomToken() {

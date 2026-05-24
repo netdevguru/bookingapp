@@ -38,3 +38,7 @@ build/
 ### SSL/Kafka Certificates ###
 ca.pem
 *.jks
+
+### Python Virtual Environment ###
+venv/
+.venv/

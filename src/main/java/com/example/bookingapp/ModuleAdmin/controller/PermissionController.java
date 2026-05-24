@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModuleAdmin;
+package com.example.bookingapp.ModuleAdmin.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

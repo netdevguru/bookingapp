@@ -1,9 +1,12 @@
-package com.example.bookingapp.ModuleAdmin;
+package com.example.bookingapp.ModuleAdmin.controller;
 
 import com.example.bookingapp.ModuleUser.UserEntity;
 import com.example.bookingapp.ModuleUser.UserRepository;
-import com.example.bookingapp.utils.EmailTemplateLoader;
-import com.example.bookingapp.utils.Mailer;
+
+import com.example.bookingapp.ModuleAppointment.events.NotificationEvent;
+import com.example.bookingapp.ModuleAppointment.service.EventPublisherService;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +16,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailTemplateLoader emailTemplateLoader;
-    private final Mailer mailer;
+    private final EventPublisherService eventPublisher;
     
     @Value("${app.frontend-url}")
     private String frontendUrl;
@@ -81,9 +86,21 @@ public class AdminController {
         // Send welcome email
         try {
             String loginUrl = frontendUrl + "/login";
-            String emailBody = emailTemplateLoader.loadTemplate("welcome-email.html",
-                Map.of("firstName", savedUser.getFirstName(), "loginUrl", loginUrl));
-            mailer.sendEmail(savedUser.getEmail(), "Welcome to CloudFlows!", emailBody, true);
+            String emailBody = objectMapper.writeValueAsString(Map.of(
+                "firstName", savedUser.getFirstName() != null ? savedUser.getFirstName() : "User",
+                "loginUrl", loginUrl
+            ));
+            NotificationEvent welcomeEvent = NotificationEvent.builder()
+                .eventId(UUID.randomUUID().toString())
+                .notificationType("EMAIL")
+                .recipientEmail(savedUser.getEmail())
+                .recipientName(savedUser.getFirstName())
+                .subject("Welcome to CloudFlows!")
+                .message(emailBody)
+                .appointmentId(null)
+                .eventTimestamp(LocalDateTime.now())
+                .build();
+            eventPublisher.publishNotificationEvent(welcomeEvent);
         } catch (Exception e) {
             System.err.println("Failed to send welcome email to " + savedUser.getEmail() + ": " + e.getMessage());
             // Don't fail user creation if email fails

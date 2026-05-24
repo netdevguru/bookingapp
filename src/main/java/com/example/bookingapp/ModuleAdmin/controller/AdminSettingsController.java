@@ -1,4 +1,4 @@
-package com.example.bookingapp.ModuleAdmin;
+package com.example.bookingapp.ModuleAdmin.controller;
 
 import com.example.bookingapp.ModuleAdmin.dto.AdminSettingsDTO;
 import com.example.bookingapp.ModuleAdmin.entity.AdminSettings;
