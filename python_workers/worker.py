@@ -165,19 +165,6 @@ def handle_notification_event(event_data, conn):
         else:
             print("[WARNING] Failed to send generic email.")
 
-def handle_appointment_event(event_data):
-    event_type = event_data.get("eventType")
-    appointment_id = event_data.get("appointmentId")
-    user_email = event_data.get("userEmail")
-    doctor_name = event_data.get("doctorName")
-    status = event_data.get("status")
-    
-    print(f"=== APPOINTMENT EVENT [{event_type}] ===")
-    print(f"Appointment ID   : {appointment_id}")
-    print(f"User Email       : {user_email}")
-    print(f"Doctor Name      : {doctor_name}")
-    print(f"New Status       : {status}")
-    print("========================================")
 
 def main():
     # Initialize DB connection
@@ -213,10 +200,9 @@ def main():
     consumer = Consumer(conf)
     
     # Read topics from env or default
-    appointment_topic = os.getenv("KAFKA_TOPIC_APPOINTMENT", "appointment-events")
     notification_topic = os.getenv("KAFKA_TOPIC_NOTIFICATION", "notification-events")
     
-    topics = [appointment_topic, notification_topic]
+    topics = [notification_topic]
     print(f"Subscribing to topics: {topics}")
     consumer.subscribe(topics)
     
@@ -247,8 +233,6 @@ def main():
                 # Check topic and handle
                 if topic == notification_topic:
                     handle_notification_event(event_data, conn)
-                elif topic == appointment_topic:
-                    handle_appointment_event(event_data)
                 else:
                     print(f"[WARNING] Received message on unhandled topic [{topic}]: {event_data}")
                     
