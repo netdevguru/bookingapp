@@ -23,7 +23,7 @@ public class AdminController {
     private final EmailTemplateLoader emailTemplateLoader;
     private final Mailer mailer;
     
-    @Value("${frontend.url}")
+    @Value("${app.frontend-url}")
     private String frontendUrl;
 
     @GetMapping("/users")
