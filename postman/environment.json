@@ -1,0 +1,45 @@
+{
+	"id": "e2ba393a-8df7-4b68-b7fb-1b8f526315ef",
+	"name": "Healthcare Appointment Environment",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:9000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_email",
+			"value": "user@example.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "doctor_id",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "appointment_id",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "slot_id",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2026-05-24T19:20:00.000Z",
+	"_postman_exported_using": "Postman/10.0.0"
+}

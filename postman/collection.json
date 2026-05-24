@@ -15,38 +15,7 @@
 			}
 		]
 	},
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:9000",
-			"type": "string"
-		},
-		{
-			"key": "jwt_token",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "user_email",
-			"value": "user@example.com",
-			"type": "string"
-		},
-		{
-			"key": "doctor_id",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "appointment_id",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "slot_id",
-			"value": "1",
-			"type": "string"
-		}
-	],
+	"variable": [],
 	"item": [
 		{
 			"name": "Authentication",
@@ -61,7 +30,7 @@
 									"if (pm.response.code === 200 || pm.response.code === 201) {",
 									"    var jsonData = pm.response.json();",
 									"    if (jsonData.jwt) {",
-									"        pm.collectionVariables.set('jwt_token', jsonData.jwt);",
+									"        pm.environment.set('jwt_token', jsonData.jwt);",
 									"    }",
 									"}"
 								],
@@ -102,7 +71,7 @@
 									"if (pm.response.code === 200) {",
 									"    var jsonData = pm.response.json();",
 									"    if (jsonData.jwt) {",
-									"        pm.collectionVariables.set('jwt_token', jsonData.jwt);",
+									"        pm.environment.set('jwt_token', jsonData.jwt);",
 									"    }",
 									"}"
 								],
@@ -245,7 +214,7 @@
 									"if (pm.response.code === 201) {",
 									"    var jsonData = pm.response.json();",
 									"    if (jsonData.id) {",
-									"        pm.collectionVariables.set('doctor_id', jsonData.id);",
+									"        pm.environment.set('doctor_id', jsonData.id);",
 									"    }",
 									"}"
 								],
@@ -391,7 +360,7 @@
 									"if (pm.response.code === 201) {",
 									"    var jsonData = pm.response.json();",
 									"    if (jsonData.length > 0 && jsonData[0].id) {",
-									"        pm.collectionVariables.set('slot_id', jsonData[0].id);",
+									"        pm.environment.set('slot_id', jsonData[0].id);",
 									"    }",
 									"}"
 								],
@@ -497,7 +466,7 @@
 									"if (pm.response.code === 201) {",
 									"    var jsonData = pm.response.json();",
 									"    if (jsonData.id) {",
-									"        pm.collectionVariables.set('appointment_id', jsonData.id);",
+									"        pm.environment.set('appointment_id', jsonData.id);",
 									"    }",
 									"}"
 								],
