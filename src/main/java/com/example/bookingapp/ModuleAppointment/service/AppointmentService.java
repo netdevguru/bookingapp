@@ -19,14 +19,18 @@ import com.example.bookingapp.ModuleAppointment.repository.AppointmentSlotReposi
 import com.example.bookingapp.ModuleAppointment.repository.DoctorRepository;
 import com.example.bookingapp.ModuleUser.UserEntity;
 import com.example.bookingapp.ModuleUser.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,12 +56,10 @@ public class AppointmentService {
         }
         
         // Get doctor
-        Doctor doctor = doctorRepository.findById(request.getDoctorId())
-                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + request.getDoctorId()));
+        Doctor doctor = doctorRepository.findById(request.getDoctorId()).orElseThrow(() -> new DoctorNotFoundException("Doctor not found with ID: " + request.getDoctorId()));
         
         // Get and lock slot to prevent concurrent booking
-        AppointmentSlot slot = slotRepository.findByIdWithLock(request.getSlotId())
-                .orElseThrow(() -> new SlotNotAvailableException("Slot not found with ID: " + request.getSlotId()));
+        AppointmentSlot slot = slotRepository.findByIdWithLock(request.getSlotId()).orElseThrow(() -> new SlotNotAvailableException("Slot not found with ID: " + request.getSlotId()));
         
         // Validate slot availability
         if (slot.getIsBooked() || !slot.getIsAvailable()) {
@@ -94,11 +96,21 @@ public class AppointmentService {
         slotRepository.save(slot);
         
         // Create history entry
-        createHistoryEntry(savedAppointment.getId(), null, AppointmentStatus.SCHEDULED, 
-                          "Appointment created", userEmail);
+        createHistoryEntry(savedAppointment.getId(), null, AppointmentStatus.SCHEDULED, "Appointment created", userEmail);
         
-        // Publish Kafka event
-        publishAppointmentCreatedEvent(savedAppointment);
+        // Publish Kafka event in a different thread after transaction commits
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        publishAppointmentCreatedEvent(savedAppointment);
+                    } catch (Exception e) {
+                        log.error("Failed to publish appointment created event asynchronously", e);
+                    }
+                });
+            }
+        });
         
         log.info("Appointment created successfully with ID: {}", savedAppointment.getId());
         return mapToResponse(savedAppointment);
@@ -108,8 +120,7 @@ public class AppointmentService {
     public AppointmentResponse cancelAppointment(Long appointmentId, CancelAppointmentRequest request, String userEmail) {
         log.info("Cancelling appointment: {} by user: {}", appointmentId, userEmail);
         
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new AppointmentException("Appointment not found with ID: " + appointmentId));
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppointmentException("Appointment not found with ID: " + appointmentId));
         
         // Validate user owns the appointment
         if (!appointment.getUser().getEmail().equals(userEmail)) {
@@ -140,11 +151,21 @@ public class AppointmentService {
         slotRepository.save(slot);
         
         // Create history entry
-        createHistoryEntry(appointmentId, oldStatus, AppointmentStatus.CANCELLED, 
-                          request.getCancellationReason(), userEmail);
+        createHistoryEntry(appointmentId, oldStatus, AppointmentStatus.CANCELLED, request.getCancellationReason(), userEmail);
         
-        // Publish Kafka event
-        publishAppointmentCancelledEvent(updatedAppointment);
+        // Publish Kafka event in a different thread after transaction commits
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        publishAppointmentCancelledEvent(updatedAppointment);
+                    } catch (Exception e) {
+                        log.error("Failed to publish appointment cancelled event asynchronously", e);
+                    }
+                });
+            }
+        });
         
         log.info("Appointment cancelled successfully: {}", appointmentId);
         return mapToResponse(updatedAppointment);
@@ -205,10 +226,21 @@ public class AppointmentService {
         
         Appointment updatedAppointment = appointmentRepository.save(appointment);
         
-        createHistoryEntry(appointmentId, oldStatus, AppointmentStatus.COMPLETED, 
-                          "Appointment completed", "SYSTEM");
+        createHistoryEntry(appointmentId, oldStatus, AppointmentStatus.COMPLETED, "Appointment completed", "SYSTEM");
         
-        publishAppointmentCompletedEvent(updatedAppointment);
+        // Publish Kafka event in a different thread after transaction commits
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        publishAppointmentCompletedEvent(updatedAppointment);
+                    } catch (Exception e) {
+                        log.error("Failed to publish appointment completed event asynchronously", e);
+                    }
+                });
+            }
+        });
         
         return mapToResponse(updatedAppointment);
     }

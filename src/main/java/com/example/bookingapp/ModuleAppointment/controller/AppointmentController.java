@@ -18,14 +18,10 @@ import java.util.List;
 @RequestMapping("/api/appointments")
 @RequiredArgsConstructor
 public class AppointmentController {
-    
     private final AppointmentService appointmentService;
     
     @PostMapping
-    public ResponseEntity<AppointmentResponse> createAppointment(
-            @Valid @RequestBody CreateAppointmentRequest request,
-            Authentication authentication) {
-        
+    public ResponseEntity<AppointmentResponse> createAppointment(@Valid @RequestBody CreateAppointmentRequest request, Authentication authentication) {
         String userEmail = authentication.getName();
         AppointmentResponse response = appointmentService.createAppointment(request, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -46,10 +42,7 @@ public class AppointmentController {
     }
     
     @GetMapping("/{appointmentId}")
-    public ResponseEntity<AppointmentResponse> getAppointmentById(
-            @PathVariable Long appointmentId,
-            Authentication authentication) {
-        
+    public ResponseEntity<AppointmentResponse> getAppointmentById(@PathVariable Long appointmentId, Authentication authentication) {
         String userEmail = authentication.getName();
         AppointmentResponse response = appointmentService.getAppointmentById(appointmentId, userEmail);
         return ResponseEntity.ok(response);
@@ -57,10 +50,10 @@ public class AppointmentController {
     
     @PostMapping("/{appointmentId}/cancel")
     public ResponseEntity<AppointmentResponse> cancelAppointment(
-            @PathVariable Long appointmentId,
-            @Valid @RequestBody CancelAppointmentRequest request,
-            Authentication authentication) {
-        
+        @PathVariable Long appointmentId, 
+        @Valid @RequestBody CancelAppointmentRequest request,
+        Authentication authentication
+    ) {
         String userEmail = authentication.getName();
         AppointmentResponse response = appointmentService.cancelAppointment(appointmentId, request, userEmail);
         return ResponseEntity.ok(response);
@@ -74,9 +67,9 @@ public class AppointmentController {
     
     @PostMapping("/{appointmentId}/complete")
     public ResponseEntity<AppointmentResponse> completeAppointment(
-            @PathVariable Long appointmentId,
-            @RequestParam(required = false) String prescription) {
-        
+        @PathVariable Long appointmentId,
+        @RequestParam(required = false) String prescription
+    ) {
         AppointmentResponse response = appointmentService.completeAppointment(appointmentId, prescription);
         return ResponseEntity.ok(response);
     }
