@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class EventPublisherService {
     
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaConfig kafkaConfig;
     
     public void publishAppointmentEvent(AppointmentEvent event) {
         try {
@@ -24,7 +25,7 @@ public class EventPublisherService {
                     event.getEventType(), event.getAppointmentId());
             
             CompletableFuture<SendResult<String, Object>> future = 
-                kafkaTemplate.send(KafkaConfig.APPOINTMENT_TOPIC, 
+                kafkaTemplate.send(kafkaConfig.getAppointmentTopicName(), 
                                   event.getAppointmentId().toString(), 
                                   event);
             
@@ -47,7 +48,7 @@ public class EventPublisherService {
             log.info("Publishing notification event for appointment ID: {}", event.getAppointmentId());
             
             CompletableFuture<SendResult<String, Object>> future = 
-                kafkaTemplate.send(KafkaConfig.NOTIFICATION_TOPIC, 
+                kafkaTemplate.send(kafkaConfig.getNotificationTopicName(), 
                                   event.getAppointmentId().toString(), 
                                   event);
             

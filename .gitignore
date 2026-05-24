@@ -34,3 +34,7 @@ build/
 
 ### Environment ###
 .env
+
+### SSL/Kafka Certificates ###
+ca.pem
+*.jks

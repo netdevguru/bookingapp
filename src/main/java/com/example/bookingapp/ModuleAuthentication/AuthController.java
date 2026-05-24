@@ -65,7 +65,7 @@ public class AuthController {
     @Value("${app.frontend-url}")
     private String frontendUrl;
 
-    @PostMapping("/register")
+    @PostMapping({"/register", "/signup"})
     public ResponseEntity<AuthResponse> register(@RequestBody UserEntity user) throws UserException {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new UserException("Email is already registered");
@@ -101,7 +101,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/login")
+    @PostMapping({"/login", "/signin"})
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) throws UserException {
         String username = loginRequest.getEmail();
         String password = loginRequest.getPassword();
