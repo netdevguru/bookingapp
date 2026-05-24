@@ -42,3 +42,5 @@ ca.pem
 ### Python Virtual Environment ###
 venv/
 .venv/
+
+.DS_Store
