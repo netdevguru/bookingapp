@@ -4,10 +4,6 @@ import com.example.bookingapp.ModuleAuthentication.dto.AuthResponse;
 import com.example.bookingapp.ModuleAuthentication.dto.ForgotPasswordRequest;
 import com.example.bookingapp.ModuleAuthentication.dto.LoginRequest;
 import com.example.bookingapp.ModuleAuthentication.dto.ResetPasswordRequest;
-import com.example.bookingapp.ModuleUser.entity.PasswordResetTokenEntity;
-import com.example.bookingapp.ModuleUser.repository.PasswordResetTokenRepository;
-import com.example.bookingapp.ModuleUser.service.UserService;
-
 import com.example.bookingapp.ModuleUser.exception.UserException;
 import com.example.bookingapp.config.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;

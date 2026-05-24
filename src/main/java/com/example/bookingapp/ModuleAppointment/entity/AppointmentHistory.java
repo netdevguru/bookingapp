@@ -23,7 +23,7 @@ public class AppointmentHistory {
     private Long appointmentId;
     
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private AppointmentStatus oldStatus;
     
     @Enumerated(EnumType.STRING)
